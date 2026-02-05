@@ -1,0 +1,56 @@
+{
+  "name": "@wyre-technology/atera-mcp",
+  "version": "0.0.0-semantically-released",
+  "description": "Atera RMM MCP server for Claude",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "atera-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wyre-technology/atera-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "atera",
+    "rmm",
+    "msp",
+    "remote-monitoring"
+  ],
+  "author": "Wyre Technology",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wyre-technology/atera-mcp/issues"
+  },
+  "homepage": "https://github.com/wyre-technology/atera-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@asachs01/node-atera": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
