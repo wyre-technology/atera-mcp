@@ -2,6 +2,13 @@
 
 Model Context Protocol (MCP) server for interacting with the Atera RMM API. Implements a decision tree architecture for efficient tool discovery and reduced context overhead.
 
+
+## One-Click Deployment
+
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/wyre-technology/atera-mcp/tree/main)
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wyre-technology/atera-mcp)
+
 ## Features
 
 - **Decision Tree Navigation**: Tools are organized by domain (customers, agents, tickets, alerts, contacts). Navigate to a domain first, then use domain-specific tools.
