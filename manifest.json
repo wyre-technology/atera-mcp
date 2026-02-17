@@ -1,29 +1,27 @@
 {
   "manifest_version": "0.3",
   "name": "atera-mcp",
-  "version": "0.0.1",
   "display_name": "Atera MCP Server",
-  "description": "Atera RMM MCP server for Claude",
-  "author": { "name": "Aaron Sachs", "url": "https://github.com/asachs01" },
+  "version": "0.0.0",
+  "description": "MCP server for Atera - access tickets, customers, devices, and alerts through AI assistants",
+  "long_description": "Provides AI assistants with structured access to your Atera data. Manage tickets, customers, devices, alerts, and knowledge base through the Model Context Protocol.",
+  "author": { "name": "Wyre Technology", "url": "https://github.com/wyre-technology" },
   "repository": { "type": "git", "url": "https://github.com/wyre-technology/atera-mcp" },
   "homepage": "https://github.com/wyre-technology/atera-mcp",
-  "license": "MIT",
-  "keywords": ["atera", "rmm", "monitoring", "msp", "it-management"],
+  "license": "Apache-2.0",
+  "keywords": ["atera", "rmm", "psa", "msp", "tickets", "it-management"],
   "server": {
     "type": "node",
     "entry_point": "dist/index.js",
     "mcp_config": {
       "command": "node",
       "args": ["${__dirname}/dist/index.js"],
-      "env": {
-        "ATERA_API_KEY": "${user_config.atera_api_key}",
-        "MCP_TRANSPORT": "stdio"
-      }
+      "env": { "ATERA_API_KEY": "${user_config.atera_api_key}", "MCP_TRANSPORT": "stdio" }
     }
   },
   "tools_generated": true,
   "user_config": {
-    "atera_api_key": { "type": "string", "title": "Atera API Key", "description": "Your Atera API key", "required": true, "sensitive": true }
+    "atera_api_key": { "type": "string", "title": "Atera API Key", "description": "Your Atera API key", "sensitive": true, "required": true }
   },
   "compatibility": { "platforms": ["darwin", "win32", "linux"], "runtimes": { "node": ">=18.0.0" }, "claude_desktop": ">=0.10.0" }
 }
