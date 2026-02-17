@@ -5,7 +5,7 @@
  * until first use, reducing startup time and memory footprint.
  */
 
-import type { AteraClient } from "@asachs01/node-atera";
+import type { AteraClient } from "@wyre-technology/node-atera";
 
 let _client: AteraClient | null = null;
 
@@ -26,7 +26,7 @@ export async function getClient(): Promise<AteraClient> {
       );
     }
 
-    const { AteraClient } = await import("@asachs01/node-atera");
+    const { AteraClient } = await import("@wyre-technology/node-atera");
     _client = new AteraClient({ apiKey });
   }
   return _client;
