@@ -5,6 +5,7 @@ FROM node:22-alpine AS builder
 ARG VERSION="unknown"
 ARG COMMIT_SHA="unknown"
 ARG BUILD_DATE="unknown"
+ARG GITHUB_TOKEN
 
 # Set working directory
 WORKDIR /app
@@ -12,6 +13,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 COPY .npmrc ./
+
+# Inject GitHub Packages auth token for npm ci
+RUN echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
 
 # Install dependencies (--ignore-scripts prevents 'prepare' from running before source is copied)
 RUN npm ci --ignore-scripts
