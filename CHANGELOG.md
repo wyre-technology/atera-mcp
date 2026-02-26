@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/wyre-technology/atera-mcp/compare/v1.0.0...v1.0.1) (2026-02-26)
+
+
+### Bug Fixes
+
+* pass GITHUB_TOKEN as build arg for Docker npm ci authentication ([6201a3d](https://github.com/wyre-technology/atera-mcp/commit/6201a3df51d8fddcf7f81d3b3e6879cf3b38996d))
+* pass GITHUB_TOKEN build-arg to Docker build for GitHub Packages auth ([a6ea833](https://github.com/wyre-technology/atera-mcp/commit/a6ea83310f56bf0fe9f4ab8a135eddbe6d11d412))
+
 # 1.0.0 (2026-02-23)
 
 
