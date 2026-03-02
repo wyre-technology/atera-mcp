@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/wyre-technology/atera-mcp/compare/v1.0.1...v1.0.2) (2026-03-02)
+
+
+### Bug Fixes
+
+* **ci:** fix broken YAML in Discord notification step ([10f5787](https://github.com/wyre-technology/atera-mcp/commit/10f5787afec8edade96999f25c25c459138d3d9c))
+* **ci:** move Discord notification into release workflow ([a36df20](https://github.com/wyre-technology/atera-mcp/commit/a36df209d0304f2096b38d4d5c422619a0ae28f3))
+
 ## [1.0.1](https://github.com/wyre-technology/atera-mcp/compare/v1.0.0...v1.0.1) (2026-02-26)
 
 
