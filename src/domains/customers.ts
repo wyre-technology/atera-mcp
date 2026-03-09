@@ -4,6 +4,7 @@
 
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getClient } from "../utils/client.js";
+import { elicitText } from "../utils/elicitation.js";
 
 /**
  * Customer domain tool definitions
@@ -115,10 +116,33 @@ export async function handleCustomerTool(
   switch (name) {
     case "atera_customers_list": {
       const params = args as { page?: number; itemsInPage?: number };
+
+      // If called with no pagination (first page, default), elicit a search term
+      let searchHint: string | null = null;
+      if (!params.page || params.page === 1) {
+        searchHint = await elicitText(
+          "Would you like to search for a specific customer by name?",
+          "search",
+          "Enter a customer name to search for, or leave blank to list all"
+        );
+      }
+
       const response = await client.customers.list({
         page: params.page,
         itemsInPage: params.itemsInPage,
       });
+
+      // If the user provided a search hint, prepend it so the LLM can filter results
+      if (searchHint) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `User is looking for customer matching: "${searchHint}"\n\n${JSON.stringify(response, null, 2)}`,
+            },
+          ],
+        };
+      }
       return {
         content: [{ type: "text", text: JSON.stringify(response, null, 2) }],
       };

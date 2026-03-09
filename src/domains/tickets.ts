@@ -4,6 +4,7 @@
 
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getClient } from "../utils/client.js";
+import { elicitText } from "../utils/elicitation.js";
 
 /**
  * Ticket domain tool definitions
@@ -178,6 +179,34 @@ export async function handleTicketTool(
         dateFrom?: string;
         dateTo?: string;
       };
+
+      // If no filters provided, elicit a date range from the user
+      const hasFilters =
+        params.ticketStatus ||
+        params.customerId ||
+        params.technicianId ||
+        params.dateFrom ||
+        params.dateTo;
+
+      if (!hasFilters) {
+        const dateFrom = await elicitText(
+          "No filters specified. Would you like to narrow results by date range?",
+          "dateFrom",
+          "Start date in ISO 8601 format (e.g. 2026-01-01), or leave blank for all"
+        );
+        if (dateFrom) {
+          params.dateFrom = dateFrom;
+          const dateTo = await elicitText(
+            "Enter an end date for the range (optional).",
+            "dateTo",
+            "End date in ISO 8601 format (e.g. 2026-03-01), or leave blank for no end date"
+          );
+          if (dateTo) {
+            params.dateTo = dateTo;
+          }
+        }
+      }
+
       const response = await client.tickets.list({
         page: params.page,
         itemsInPage: params.itemsInPage,
