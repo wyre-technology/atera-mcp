@@ -30,6 +30,7 @@ import { ticketTools, handleTicketTool } from "./domains/tickets.js";
 import { alertTools, handleAlertTool } from "./domains/alerts.js";
 import { contactTools, handleContactTool } from "./domains/contacts.js";
 import { resetClient } from "./utils/client.js";
+import { setServerRef } from "./utils/server-ref.js";
 
 /**
  * Transport and auth configuration types
@@ -138,6 +139,7 @@ const server = new Server(
     },
   }
 );
+setServerRef(server);
 
 /**
  * Handle ListTools requests - returns tools based on current state
