@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/wyre-technology/atera-mcp/compare/v1.0.2...v1.1.0) (2026-03-10)
+
+
+### Features
+
+* **elicitation:** add MCP elicitation support with graceful fallback ([dd3549c](https://github.com/wyre-technology/atera-mcp/commit/dd3549cf716b88b533383d24b5ec8f6b29f8d77c))
+
 ## [1.0.2](https://github.com/wyre-technology/atera-mcp/compare/v1.0.1...v1.0.2) (2026-03-02)
 
 
