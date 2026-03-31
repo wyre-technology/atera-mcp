@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/wyre-technology/atera-mcp/compare/v1.1.0...v1.1.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* **deploy:** replace node_compat with nodejs_compat for Wrangler v4 ([b03c21c](https://github.com/wyre-technology/atera-mcp/commit/b03c21cf83d0b1b55ebe639f722201fd7595c9a6))
+
 # [1.1.0](https://github.com/wyre-technology/atera-mcp/compare/v1.0.2...v1.1.0) (2026-03-10)
 
 
