@@ -1,6 +1,6 @@
 {
   "name": "@wyre-technology/atera-mcp",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Atera RMM MCP server for Claude",
   "type": "module",
   "main": "dist/index.js",

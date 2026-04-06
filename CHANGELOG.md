@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/wyre-technology/atera-mcp/compare/v1.1.3...v1.1.4) (2026-04-06)
+
+
+### Bug Fixes
+
+* **ci:** fix all node -p shell quoting in release workflow ([cc12980](https://github.com/wyre-technology/atera-mcp/commit/cc12980081f2568391c4005241ce2ae2e947eae9))
+
 ## [1.1.3](https://github.com/wyre-technology/atera-mcp/compare/v1.1.2...v1.1.3) (2026-04-06)
 
 
