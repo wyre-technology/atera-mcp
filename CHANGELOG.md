@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/wyre-technology/atera-mcp/compare/v1.1.5...v1.1.6) (2026-04-06)
+
+
+### Bug Fixes
+
+* per-request MCP Server+Transport for gateway compatibility ([960002b](https://github.com/wyre-technology/atera-mcp/commit/960002b0199b5528e50c6dbad4331c0d77fa248f))
+
 ## [1.1.5](https://github.com/wyre-technology/atera-mcp/compare/v1.1.4...v1.1.5) (2026-04-06)
 
 
