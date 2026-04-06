@@ -13,7 +13,6 @@
  */
 
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
-import { randomUUID } from "node:crypto";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -56,17 +55,6 @@ const domainDescriptions: Record<Domain, string> = {
   alerts:
     "Alert monitoring - list and get alerts from monitored devices and agents",
   contacts: "Contact management - list and get customer contact information",
-};
-
-/**
- * Server state management
- */
-interface ServerState {
-  currentDomain: Domain | null;
-}
-
-const state: ServerState = {
-  currentDomain: null,
 };
 
 /**
@@ -126,138 +114,133 @@ const backTool: Tool = {
 };
 
 /**
- * Create the MCP server
+ * Create a fresh MCP server instance with all handlers registered.
+ * Called once for stdio, or per-request for HTTP transport.
  */
-const server = new Server(
-  {
-    name: "atera-mcp",
-    version: "1.0.0",
-  },
-  {
-    capabilities: {
-      tools: {},
+function createMcpServer(): Server {
+  const state = { currentDomain: null as Domain | null };
+
+  const server = new Server(
+    {
+      name: "atera-mcp",
+      version: "1.0.0",
     },
-  }
-);
-setServerRef(server);
+    {
+      capabilities: {
+        tools: {},
+      },
+    }
+  );
+  setServerRef(server);
 
-/**
- * Handle ListTools requests - returns tools based on current state
- */
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  const tools: Tool[] = [];
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const tools: Tool[] = [];
 
-  if (state.currentDomain === null) {
-    // At root - show navigation tool only
-    tools.push(navigateTool);
-  } else {
-    // In a domain - show domain tools plus back navigation
-    tools.push(backTool);
-    tools.push(...getDomainTools(state.currentDomain));
-  }
+    if (state.currentDomain === null) {
+      tools.push(navigateTool);
+    } else {
+      tools.push(backTool);
+      tools.push(...getDomainTools(state.currentDomain));
+    }
 
-  return { tools };
-});
+    return { tools };
+  });
 
-/**
- * Handle CallTool requests
- */
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
 
-  try {
-    // Handle navigation
-    if (name === "atera_navigate") {
-      const { domain } = args as { domain: Domain };
-      state.currentDomain = domain;
+    try {
+      // Handle navigation
+      if (name === "atera_navigate") {
+        const { domain } = args as { domain: Domain };
+        state.currentDomain = domain;
 
-      const domainTools = getDomainTools(domain);
-      const toolNames = domainTools.map((t) => t.name).join(", ");
+        const domainTools = getDomainTools(domain);
+        const toolNames = domainTools.map((t) => t.name).join(", ");
 
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Navigated to ${domain} domain. Available tools: ${toolNames}`,
+            },
+          ],
+        };
+      }
+
+      // Handle back navigation
+      if (name === "atera_back") {
+        state.currentDomain = null;
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Returned to domain selection. Use atera_navigate to select a domain: customers, agents, tickets, alerts, contacts",
+            },
+          ],
+        };
+      }
+
+      // Route to appropriate domain handler
+      const toolArgs = (args ?? {}) as Record<string, unknown>;
+
+      if (name.startsWith("atera_customers_")) {
+        return await handleCustomerTool(name, toolArgs);
+      }
+      if (name.startsWith("atera_agents_")) {
+        return await handleAgentTool(name, toolArgs);
+      }
+      if (name.startsWith("atera_tickets_")) {
+        return await handleTicketTool(name, toolArgs);
+      }
+      if (name.startsWith("atera_alerts_")) {
+        return await handleAlertTool(name, toolArgs);
+      }
+      if (name.startsWith("atera_contacts_")) {
+        return await handleContactTool(name, toolArgs);
+      }
+
+      // Unknown tool
       return {
         content: [
           {
             type: "text",
-            text: `Navigated to ${domain} domain. Available tools: ${toolNames}`,
+            text: `Unknown tool: ${name}. Use atera_navigate to select a domain first.`,
           },
         ],
+        isError: true,
       };
-    }
-
-    // Handle back navigation
-    if (name === "atera_back") {
-      state.currentDomain = null;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       return {
-        content: [
-          {
-            type: "text",
-            text: "Returned to domain selection. Use atera_navigate to select a domain: customers, agents, tickets, alerts, contacts",
-          },
-        ],
+        content: [{ type: "text", text: `Error: ${message}` }],
+        isError: true,
       };
     }
+  });
 
-    // Route to appropriate domain handler
-    const toolArgs = (args ?? {}) as Record<string, unknown>;
-
-    if (name.startsWith("atera_customers_")) {
-      return await handleCustomerTool(name, toolArgs);
-    }
-    if (name.startsWith("atera_agents_")) {
-      return await handleAgentTool(name, toolArgs);
-    }
-    if (name.startsWith("atera_tickets_")) {
-      return await handleTicketTool(name, toolArgs);
-    }
-    if (name.startsWith("atera_alerts_")) {
-      return await handleAlertTool(name, toolArgs);
-    }
-    if (name.startsWith("atera_contacts_")) {
-      return await handleContactTool(name, toolArgs);
-    }
-
-    // Unknown tool
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Unknown tool: ${name}. Use atera_navigate to select a domain first.`,
-        },
-      ],
-      isError: true,
-    };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return {
-      content: [{ type: "text", text: `Error: ${message}` }],
-      isError: true,
-    };
-  }
-});
+  return server;
+}
 
 /**
  * Start the server with stdio transport (default)
  */
 async function startStdioTransport(): Promise<void> {
+  const server = createMcpServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Atera MCP server running on stdio");
 }
 
 /**
- * Start the server with HTTP Streamable transport
- * In gateway mode, credentials are extracted from request headers on each request
+ * Start the server with HTTP Streamable transport.
+ * Each request gets a fresh Server + Transport (stateless).
  */
 async function startHttpTransport(): Promise<void> {
   const port = parseInt(process.env.MCP_HTTP_PORT || "8080", 10);
   const host = process.env.MCP_HTTP_HOST || "0.0.0.0";
   const authMode = (process.env.AUTH_MODE as AuthMode) || "env";
   const isGatewayMode = authMode === "gateway";
-
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: () => randomUUID(),
-    enableJsonResponse: true,
-  });
 
   const httpServer = createServer(
     (req: IncomingMessage, res: ServerResponse) => {
@@ -282,10 +265,6 @@ async function startHttpTransport(): Promise<void> {
 
       // MCP endpoint
       if (url.pathname === "/mcp") {
-        // In gateway mode, set credentials if provided but don't reject
-        // requests without them. tools/list and initialize don't need
-        // credentials; tools/call will fail with a clear error if
-        // credentials are missing when the API client is created.
         if (isGatewayMode) {
           const apiKey = req.headers["x-atera-api-key"] as string | undefined;
 
@@ -295,7 +274,21 @@ async function startHttpTransport(): Promise<void> {
           }
         }
 
-        transport.handleRequest(req, res);
+        // Create fresh server + transport per request (stateless)
+        const server = createMcpServer();
+        const transport = new StreamableHTTPServerTransport({
+          sessionIdGenerator: undefined,
+          enableJsonResponse: true,
+        });
+
+        res.on("close", () => {
+          transport.close();
+          server.close();
+        });
+
+        server.connect(transport).then(() => {
+          transport.handleRequest(req, res);
+        });
         return;
       }
 
@@ -309,8 +302,6 @@ async function startHttpTransport(): Promise<void> {
       );
     }
   );
-
-  await server.connect(transport);
 
   await new Promise<void>((resolve) => {
     httpServer.listen(port, host, () => {
@@ -331,7 +322,6 @@ async function startHttpTransport(): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       httpServer.close((err) => (err ? reject(err) : resolve()));
     });
-    await server.close();
     process.exit(0);
   };
 
