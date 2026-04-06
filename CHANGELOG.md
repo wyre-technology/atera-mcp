@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/wyre-technology/atera-mcp/compare/v1.1.1...v1.1.2) (2026-04-06)
+
+
+### Bug Fixes
+
+* allow unauthenticated tools/list in gateway mode ([998a9b9](https://github.com/wyre-technology/atera-mcp/commit/998a9b958f20c853a54b0946c39bd6f56a572497))
+
 ## [1.1.1](https://github.com/wyre-technology/atera-mcp/compare/v1.1.0...v1.1.1) (2026-03-31)
 
 
