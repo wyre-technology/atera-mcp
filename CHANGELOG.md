@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/wyre-technology/atera-mcp/compare/v1.1.2...v1.1.3) (2026-04-06)
+
+
+### Bug Fixes
+
+* **ci:** escape parentheses in Docker build workflow shell command ([10b0e33](https://github.com/wyre-technology/atera-mcp/commit/10b0e33762372d38b69f42ea78eebcd48f0cbfb7))
+
 ## [1.1.2](https://github.com/wyre-technology/atera-mcp/compare/v1.1.1...v1.1.2) (2026-04-06)
 
 
