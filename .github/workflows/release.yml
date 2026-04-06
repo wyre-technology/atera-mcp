@@ -86,7 +86,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
       - name: Get version
         id: version
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+        run: echo "version=$(node -e 'process.stdout.write(require("./package.json").version)')" >> $GITHUB_OUTPUT
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -106,7 +106,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(node -e 'process.stdout.write(require("./package.json").version)')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           if gh release view "v$VERSION" --repo ${{ github.repository }} &>/dev/null; then
             echo "released=true" >> $GITHUB_OUTPUT
