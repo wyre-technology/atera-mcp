@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/wyre-technology/atera-mcp/compare/v1.1.4...v1.1.5) (2026-04-06)
+
+
+### Bug Fixes
+
+* **ci:** add DOM lib and node types to tsconfig, install deps for MCPB step ([f3b4061](https://github.com/wyre-technology/atera-mcp/commit/f3b4061b0ca29f00379b13ae0e8a911ec3111bf0))
+
 ## [1.1.4](https://github.com/wyre-technology/atera-mcp/compare/v1.1.3...v1.1.4) (2026-04-06)
 
 
