@@ -170,8 +170,8 @@ jobs:
       - name: Deploy to Azure Container Apps
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          IMAGE="ghcr.io/${{ github.repository }}:sha-${SHORT_SHA}"
-          echo "Deploying $IMAGE to gwp-atera"
+          IMAGE="ghcr.io/${{ github.repository }}:latest"
+          echo "Deploying $IMAGE to gwp-atera (revision tag sha-${SHORT_SHA}-${GITHUB_RUN_ID})"
           az containerapp update \
             --name gwp-atera \
             --resource-group mcp-gateway-prod \
