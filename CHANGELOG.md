@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/wyre-technology/atera-mcp/compare/v1.1.6...v1.1.7) (2026-04-07)
+
+
+### Bug Fixes
+
+* **ci:** deploy :latest tag, force revision via env var bump ([5fd017e](https://github.com/wyre-technology/atera-mcp/commit/5fd017e323e3bb1668649a9203704616128e374f))
+
 ## [1.1.6](https://github.com/wyre-technology/atera-mcp/compare/v1.1.5...v1.1.6) (2026-04-06)
 
 
