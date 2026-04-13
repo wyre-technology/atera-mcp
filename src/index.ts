@@ -28,7 +28,7 @@ import { agentTools, handleAgentTool } from "./domains/agents.js";
 import { ticketTools, handleTicketTool } from "./domains/tickets.js";
 import { alertTools, handleAlertTool } from "./domains/alerts.js";
 import { contactTools, handleContactTool } from "./domains/contacts.js";
-import { resetClient } from "./utils/client.js";
+import { runWithCredentials } from "./utils/client.js";
 import { setServerRef } from "./utils/server-ref.js";
 
 /**
@@ -265,30 +265,35 @@ async function startHttpTransport(): Promise<void> {
 
       // MCP endpoint
       if (url.pathname === "/mcp") {
+        // In gateway mode, extract credentials and bind them to the
+        // request's async context — no process.env mutation.
+        const handleMcp = () => {
+          const server = createMcpServer();
+          const transport = new StreamableHTTPServerTransport({
+            sessionIdGenerator: undefined,
+            enableJsonResponse: true,
+          });
+
+          res.on("close", () => {
+            transport.close();
+            server.close();
+          });
+
+          server.connect(transport).then(() => {
+            transport.handleRequest(req, res);
+          });
+        };
+
         if (isGatewayMode) {
           const apiKey = req.headers["x-atera-api-key"] as string | undefined;
-
           if (apiKey) {
-            resetClient();
-            process.env.ATERA_API_KEY = apiKey;
+            runWithCredentials({ apiKey }, handleMcp);
+          } else {
+            handleMcp();
           }
+        } else {
+          handleMcp();
         }
-
-        // Create fresh server + transport per request (stateless)
-        const server = createMcpServer();
-        const transport = new StreamableHTTPServerTransport({
-          sessionIdGenerator: undefined,
-          enableJsonResponse: true,
-        });
-
-        res.on("close", () => {
-          transport.close();
-          server.close();
-        });
-
-        server.connect(transport).then(() => {
-          transport.handleRequest(req, res);
-        });
         return;
       }
 
