@@ -5,7 +5,7 @@
  * and gateway authentication mode.
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import type { Server as HttpServer } from "node:http";
 import type { AddressInfo } from "node:net";
