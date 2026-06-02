@@ -1,3 +1,23 @@
+## [Unreleased]
+
+### Fixed
+
+- **Deploy buttons:** authenticate against the GitHub Packages npm registry during
+  one-click cloud builds. The `@wyre-technology/node-atera` dependency lives on
+  GitHub Packages, which has no anonymous read, so `npm install` failed with
+  `401 Unauthorized` on Cloudflare Workers and DigitalOcean. Operators now supply a
+  `read:packages` PAT as a build variable (`NODE_AUTH_TOKEN` for Workers,
+  `GITHUB_TOKEN` build-time secret for DigitalOcean). The `.npmrc` reads the token,
+  `.do/app.yaml` declares the build-time secret, and `wrangler.json` now bundles
+  `src/worker.ts` directly (the gitignored `dist/worker.js` is absent in fresh clones).
+  Part of the fleet-wide fix mirroring wyre-technology/ninjaone-mcp#35.
+
+### Changed
+
+- **Publishing:** the package now publishes to the GitHub Packages npm registry
+  (`@semantic-release/npm` `npmPublish: true` + `publishConfig`), aligning with the
+  rest of the `@wyre-technology` fleet.
+
 ## [1.1.7](https://github.com/wyre-technology/atera-mcp/compare/v1.1.6...v1.1.7) (2026-04-07)
 
 
