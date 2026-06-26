@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // Mock the node-atera module before importing the client
 vi.mock("@wyre-technology/node-atera", () => ({
-  AteraClient: vi.fn().mockImplementation(() => ({
+  AteraClient: vi.fn().mockImplementation(function () { return ({
     customers: { list: vi.fn(), get: vi.fn(), create: vi.fn() },
     agents: { list: vi.fn(), get: vi.fn(), getByMachineName: vi.fn() },
     tickets: { list: vi.fn(), get: vi.fn(), create: vi.fn(), update: vi.fn() },
@@ -17,7 +17,7 @@ vi.mock("@wyre-technology/node-atera", () => ({
       listByDevice: vi.fn(),
     },
     contacts: { list: vi.fn(), get: vi.fn(), listByCustomer: vi.fn() },
-  })),
+  }) }),
 }));
 
 describe("client utility", () => {
