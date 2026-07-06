@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/wyre-technology/atera-mcp#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.3",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@wyre-technology/node-atera": "^1.0.0"
   },
   "devDependencies": {
