@@ -5,6 +5,7 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getClient } from "../utils/client.js";
 import { elicitText } from "../utils/elicitation.js";
+import { buildTicketCard, TICKET_CARD_META } from "../card.builder.js";
 
 /**
  * Ticket domain tool definitions
@@ -53,6 +54,7 @@ export const ticketTools: Tool[] = [
     name: "atera_tickets_get",
     description:
       "Get detailed information about a specific ticket by its ID. Returns full ticket details including comments, work hours, and billing info.",
+    _meta: TICKET_CARD_META,
     inputSchema: {
       type: "object",
       properties: {
@@ -157,6 +159,31 @@ export const ticketTools: Tool[] = [
       required: ["ticketId"],
     },
   },
+  {
+    name: "atera_tickets_add_comment",
+    description:
+      "Add a comment to a ticket. Comments are internal (hidden from the end user) by default; set isInternal to false only when the comment should be visible to the end user.",
+    _meta: TICKET_CARD_META,
+    inputSchema: {
+      type: "object",
+      properties: {
+        ticketId: {
+          type: "number",
+          description: "The ticket ID to comment on (required)",
+        },
+        comment: {
+          type: "string",
+          description: "The comment text (required)",
+        },
+        isInternal: {
+          type: "boolean",
+          description:
+            "Whether the comment is internal-only (hidden from the end user). Defaults to true.",
+        },
+      },
+      required: ["ticketId", "comment"],
+    },
+  },
 ];
 
 /**
@@ -224,8 +251,20 @@ export async function handleTicketTool(
     case "atera_tickets_get": {
       const { ticketId } = args as { ticketId: number };
       const ticket = await client.tickets.get(ticketId);
+
+      const payload: Record<string, unknown> = { ...ticket };
+
+      // MCP Apps: attach the normalized card payload the ui:// ticket card
+      // renders from. Best-effort — a null card just means no UI surface.
+      try {
+        const card = await buildTicketCard(payload, client);
+        if (card) payload._card = card;
+      } catch {
+        // Card building never fails the tool result.
+      }
+
       return {
-        content: [{ type: "text", text: JSON.stringify(ticket, null, 2) }],
+        content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       };
     }
 
@@ -261,6 +300,23 @@ export async function handleTicketTool(
       const ticket = await client.tickets.update(ticketId, updateData);
       return {
         content: [{ type: "text", text: JSON.stringify(ticket, null, 2) }],
+      };
+    }
+
+    case "atera_tickets_add_comment": {
+      const { ticketId, comment, isInternal } = args as {
+        ticketId: number;
+        comment: string;
+        isInternal?: boolean;
+      };
+      // Internal-only is the safe default: an Atera comment is only visible
+      // to the end user when isInternal is explicitly set to false.
+      const created = await client.tickets.createComment(ticketId, {
+        Comment: comment,
+        IsInternal: isInternal ?? true,
+      });
+      return {
+        content: [{ type: "text", text: JSON.stringify(created, null, 2) }],
       };
     }
 

@@ -12,6 +12,8 @@ const mockClient = {
     get: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    listComments: vi.fn(),
+    createComment: vi.fn(),
   },
 };
 
@@ -22,6 +24,8 @@ vi.mock("../../utils/client.js", () => ({
       get: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      listComments: vi.fn(),
+      createComment: vi.fn(),
     },
   }),
 }));
@@ -36,8 +40,8 @@ describe("tickets domain", () => {
   });
 
   describe("ticketTools", () => {
-    it("should export four ticket tools", () => {
-      expect(ticketTools).toHaveLength(4);
+    it("should export five ticket tools", () => {
+      expect(ticketTools).toHaveLength(5);
     });
 
     it("should have atera_tickets_list tool with filter options", () => {
@@ -66,6 +70,18 @@ describe("tickets domain", () => {
       expect(createTool).toBeDefined();
       expect(createTool?.inputSchema.properties).toHaveProperty("TicketTitle");
       expect(createTool?.inputSchema.required).toContain("TicketTitle");
+    });
+
+    it("should have atera_tickets_add_comment tool with required ticketId and comment", () => {
+      const commentTool = ticketTools.find(
+        (t) => t.name === "atera_tickets_add_comment"
+      );
+      expect(commentTool).toBeDefined();
+      expect(commentTool?.inputSchema.properties).toHaveProperty("ticketId");
+      expect(commentTool?.inputSchema.properties).toHaveProperty("comment");
+      expect(commentTool?.inputSchema.properties).toHaveProperty("isInternal");
+      expect(commentTool?.inputSchema.required).toContain("ticketId");
+      expect(commentTool?.inputSchema.required).toContain("comment");
     });
 
     it("should have atera_tickets_update tool with required ticketId", () => {
@@ -213,6 +229,39 @@ describe("tickets domain", () => {
         });
 
         expect(mockClient.tickets.update).toHaveBeenCalledWith(789, {});
+      });
+    });
+
+    describe("atera_tickets_add_comment", () => {
+      it("should default to an internal-only comment", async () => {
+        const mockComment = { CommentID: 1, TicketID: 789, Comment: "Checked logs" };
+        mockClient.tickets.createComment.mockResolvedValue(mockComment);
+
+        const result = await handleTicketTool("atera_tickets_add_comment", {
+          ticketId: 789,
+          comment: "Checked logs",
+        });
+
+        expect(mockClient.tickets.createComment).toHaveBeenCalledWith(789, {
+          Comment: "Checked logs",
+          IsInternal: true,
+        });
+        expect(result.isError).toBeUndefined();
+      });
+
+      it("should pass isInternal: false through when explicitly set", async () => {
+        mockClient.tickets.createComment.mockResolvedValue({ CommentID: 2 });
+
+        await handleTicketTool("atera_tickets_add_comment", {
+          ticketId: 789,
+          comment: "Update for the customer",
+          isInternal: false,
+        });
+
+        expect(mockClient.tickets.createComment).toHaveBeenCalledWith(789, {
+          Comment: "Update for the customer",
+          IsInternal: false,
+        });
       });
     });
 

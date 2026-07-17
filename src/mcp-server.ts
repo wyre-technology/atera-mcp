@@ -23,6 +23,7 @@ import { ticketTools, handleTicketTool } from "./domains/tickets.js";
 import { alertTools, handleAlertTool } from "./domains/alerts.js";
 import { contactTools, handleContactTool } from "./domains/contacts.js";
 import { setServerRef } from "./utils/server-ref.js";
+import { registerResourceHandlers } from "./resources.js";
 import type { AteraCredentials } from "./utils/client.js";
 
 export type { AteraCredentials };
@@ -41,7 +42,7 @@ const domainDescriptions: Record<Domain, string> = {
   agents:
     "Agent/device management - list and get managed devices with RMM agent installed",
   tickets:
-    "Ticket management - list, get, create, and update service tickets",
+    "Ticket management - list, get, create, update, and comment on service tickets",
   alerts:
     "Alert monitoring - list and get alerts from monitored devices and agents",
   contacts: "Contact management - list and get customer contact information",
@@ -118,10 +119,12 @@ export function createMcpServer(): Server {
     {
       capabilities: {
         tools: {},
+        resources: {},
       },
     }
   );
   setServerRef(server);
+  registerResourceHandlers(server);
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     const tools: Tool[] = [];

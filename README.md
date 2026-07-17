@@ -40,6 +40,7 @@ Model Context Protocol (MCP) server for interacting with the Atera RMM API. Impl
 - **Lazy Client Loading**: The Atera client is only instantiated when first needed, reducing startup time.
 - **Full API Coverage**: Supports customer management, device/agent monitoring, ticket operations, alert handling, and contact management.
 - **Rate Limit Handling**: Built-in rate limiting via the node-atera client (700 req/min).
+- **Interactive Ticket Card (MCP Apps)**: `atera_tickets_get` renders as an interactive card in MCP Apps hosts (Claude Desktop/web) with an in-card "Add comment" round-trip via `atera_tickets_add_comment` (internal-only by default); plain-JSON behavior is unchanged in other hosts. The card is neutral by default and brandable via `window.__BRAND__` injection or `MCP_BRAND_*` env vars (`MCP_BRAND_NAME`, `MCP_BRAND_LOGO_URL`, `MCP_BRAND_PRIMARY_COLOR`, `MCP_BRAND_ACCENT_COLOR`, `MCP_BRAND_BG`, `MCP_BRAND_TEXT`) — no rebuild needed.
 
 ## Installation
 

@@ -47,7 +47,7 @@ describe("navigation and state management", () => {
 
     it("should return ticket tools for tickets domain", async () => {
       const { ticketTools } = await import("../domains/tickets.js");
-      expect(ticketTools).toHaveLength(4);
+      expect(ticketTools).toHaveLength(5);
       expect(ticketTools[0].name).toBe("atera_tickets_list");
     });
 
