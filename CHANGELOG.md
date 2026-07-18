@@ -10,6 +10,13 @@
 
 ### Fixed
 
+- **SDK: single-read HTTP response handling.** Bumped `@wyre-technology/node-atera`
+  to `^1.0.6`, which reads each HTTP response body exactly once
+  ([node-atera v1.0.6](https://github.com/wyre-technology/node-atera/releases/tag/v1.0.6)).
+  Previously, error paths could re-read an already-consumed body and surface an
+  empty `{}` instead of the real API error; failures now propagate as descriptive
+  errors. Same pattern as
+  [connectwise-automate-mcp#54](https://github.com/wyre-technology/connectwise-automate-mcp/issues/54).
 - **Deploy buttons:** authenticate against the GitHub Packages npm registry during
   one-click cloud builds. The `@wyre-technology/node-atera` dependency lives on
   GitHub Packages, which has no anonymous read, so `npm install` failed with
